@@ -1,0 +1,15 @@
+-- Pertanyaan 4
+-- Q: Tampilkan top 5 metode pembayaran yang paling populer digunakan selama 2022
+-- (berdasarkan total unique order).
+
+select
+  pd.payment_method,
+  count(distinct od.id) total_order
+from `dataset_fp.order_detail` od
+left join `dataset_fp.payment_detail` pd
+on od.payment_id = pd.id
+where
+  extract(year from od.order_date) = 2022 and is_valid = 1
+group by 1
+order by 2 desc
+limit 5;

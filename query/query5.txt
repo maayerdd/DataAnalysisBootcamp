@@ -1,0 +1,29 @@
+-- Pertanyaan 5
+-- Q: Urutkan dari ke-5 produk ini berdasarkan nilai transaksinya.
+-- Samsung, Apple, Sony, Huawei, Lenovo
+
+with regex as (
+  select
+    case
+      when lower(sd.sku_name) like '%samsung%' then 'Samsung'
+      when lower(sd.sku_name) like '%sony%' then 'Sony'
+      when lower(sd.sku_name) like '%huawei%' then 'Huawei'
+      when lower(sd.sku_name) like '%lenovo%' then 'Lenovo'
+      when regexp_contains(lower(sd.sku_name), r'(apple|imac|macbook|iphone)') then 'Apple'
+    end as brand_name,
+    sum(od.after_discount) as transaction_value
+  from `dataset_fp.order_detail` od
+  left join `dataset_fp.sku_detail` sd
+  on od.sku_id = sd.id
+  where is_valid = 1
+  group by 1
+)
+
+select 
+  brand_name, 
+  transaction_value
+from
+  regex
+where
+  brand_name is not null
+order by 2 desc

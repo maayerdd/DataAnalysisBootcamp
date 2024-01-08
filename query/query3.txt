@@ -1,0 +1,28 @@
+-- Pertanyaan 3
+-- Q: Bandingkan nilai transaksi dari masing-masing kategori pada tahun 2021 dengan 2022.
+-- Sebutkan kategori apa saja yang mengalami peningkatan dan kategori apa yang mengalami
+-- penurunan nilai transaksi dari tahun 2021 ke 2022.
+
+with yearly_trx AS (
+  select
+    category,
+    sum(case when extract(year from order_date) = 2021 then after_discount end) as total_transaction_2021,
+    sum(case when extract(year from order_date) = 2022 then after_discount end) as total_transaction_2022
+  from `dataset_fp.order_detail` as od
+  left join `dataset_fp.sku_detail` as sd
+  on od.sku_id = sd.id
+  where is_valid = 1
+  group by category
+)
+
+select
+  category,
+  total_transaction_2021,
+  total_transaction_2022,
+  (total_transaction_2022 - total_transaction_2021) change,
+  case
+    when total_transaction_2022 > total_transaction_2021 then 'Inc'
+    else 'Dec'
+  end as performance
+from yearly_trx
+order by 4 desc;

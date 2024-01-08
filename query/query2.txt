@@ -1,0 +1,20 @@
+-- Pertanyaan 2
+-- Q: Selama transaksi pada tahun 2022, kategori apa yang menghasilkan nilai transaksi paling
+-- besar?
+
+select
+  category,
+  sum(after_discount) total_transaction
+from 
+  `dataset_fp.order_detail` od
+left join 
+  `dataset_fp.sku_detail` sd
+on
+  od.sku_id = sd.id
+where
+  extract(year from order_date) = 2022
+and
+  is_valid = 1
+group by 1
+order by 2 desc
+limit 1;

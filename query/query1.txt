@@ -1,0 +1,13 @@
+-- Pertanyaan 1
+-- Q: Selama transaksi yang terjadi selama 2021, pada bulan apa total nilai transaksi
+-- (after_discount) paling besar?
+
+select
+  extract(month from order_date) as month_2021, 
+  sum(after_discount) as total_sales
+from
+	`dataset_fp.order_detail`
+where
+	extract (year from order_date)=2021 and is_valid = 1
+group by 1
+order by 2 desc limit 1
